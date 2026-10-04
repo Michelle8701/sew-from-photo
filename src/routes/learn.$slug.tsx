@@ -85,7 +85,7 @@ function GuidePage() {
     );
   }
 
-  const s = guide.steps[step];
+  const s = guide.steps[step]!;
   return (
     <AppShell>
       <div className="mx-auto flex min-h-[calc(100dvh-9rem)] max-w-2xl flex-col px-4 py-5">

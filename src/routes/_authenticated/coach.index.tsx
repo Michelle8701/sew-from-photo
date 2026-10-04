@@ -54,7 +54,7 @@ function CoachList() {
 
   async function remove(id: string) {
     const { error } = await supabase.from("threads").delete().eq("id", id);
-    if (error) return toast.error("Couldn't delete");
+    if (error) { toast.error("Couldn't delete"); return; }
     qc.invalidateQueries({ queryKey: ["threads"] });
   }
 

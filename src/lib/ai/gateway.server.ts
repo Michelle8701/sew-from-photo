@@ -8,8 +8,8 @@ const BASE = "https://ai.gateway.lovable.dev/v1";
 export function streamCoach(opts: {
   system: string;
   messages: ModelMessage[];
-  signal?: AbortSignal;
-  runId?: string;
+  signal?: AbortSignal | undefined;
+  runId?: string | undefined;
 }) {
   const apiKey = process.env["LOVABLE_API_KEY"];
   if (!apiKey) throw new Error("AI is not configured");
@@ -24,7 +24,7 @@ export function streamCoach(opts: {
     model: provider.responses(MODEL),
     system: opts.system,
     messages: opts.messages,
-    abortSignal: opts.signal,
+    ...(opts.signal ? { abortSignal: opts.signal } : {}),
     providerOptions: {
       openai: {
         forceReasoning: true,

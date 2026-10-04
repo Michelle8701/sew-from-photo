@@ -24,7 +24,7 @@ function DraftPage() {
   const navigate = useNavigate();
   async function remove() {
     const { error } = await supabase.from("pattern_drafts").delete().eq("id", draft.id);
-    if (error) return toast.error("Couldn't delete");
+    if (error) { toast.error("Couldn't delete"); return; }
     navigate({ to: "/pattern" });
   }
   return (

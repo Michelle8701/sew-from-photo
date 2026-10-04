@@ -22,7 +22,7 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 
 export const Route = createFileRoute("/_authenticated/coach/$threadId")({
-  validateSearch: (s: Record<string, unknown>) => ({ q: typeof s.q === "string" ? s.q : undefined }),
+  validateSearch: (s: Record<string, unknown>): { q?: string } => (typeof s["q"] === "string" ? { q: s["q"] } : {}),
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("chat_messages")
