@@ -10,15 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as UpcycleRouteImport } from './routes/upcycle'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as LearnIndexRouteImport } from './routes/learn.index'
 import { Route as LearnSlugRouteImport } from './routes/learn.$slug'
+import { Route as AuthenticatedCoachIndexRouteImport } from './routes/_authenticated/coach.index'
+import { Route as AuthenticatedCoachThreadIdRouteImport } from './routes/_authenticated/coach.$threadId'
+import { Route as AuthenticatedPatternIndexRouteImport } from './routes/_authenticated/pattern.index'
+import { Route as AuthenticatedPatternIdRouteImport } from './routes/_authenticated/pattern.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -46,6 +55,28 @@ const LearnSlugRoute = LearnSlugRouteImport.update({
   path: '/learn/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCoachIndexRoute = AuthenticatedCoachIndexRouteImport.update({
+  id: '/coach/',
+  path: '/coach/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedCoachThreadIdRoute =
+  AuthenticatedCoachThreadIdRouteImport.update({
+    id: '/coach/$threadId',
+    path: '/coach/$threadId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPatternIndexRoute =
+  AuthenticatedPatternIndexRouteImport.update({
+    id: '/pattern/',
+    path: '/pattern/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPatternIdRoute = AuthenticatedPatternIdRouteImport.update({
+  id: '/pattern/$id',
+  path: '/pattern/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -54,6 +85,10 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
+  '/coach/$threadId': typeof AuthenticatedCoachThreadIdRoute
+  '/pattern/$id': typeof AuthenticatedPatternIdRoute
+  '/coach/': typeof AuthenticatedCoachIndexRoute
+  '/pattern/': typeof AuthenticatedPatternIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,34 +97,68 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn': typeof LearnIndexRoute
+  '/coach/$threadId': typeof AuthenticatedCoachThreadIdRoute
+  '/pattern/$id': typeof AuthenticatedPatternIdRoute
+  '/coach': typeof AuthenticatedCoachIndexRoute
+  '/pattern': typeof AuthenticatedPatternIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/upcycle': typeof UpcycleRoute
   '/api/chat': typeof ApiChatRoute
   '/learn/$slug': typeof LearnSlugRoute
   '/learn/': typeof LearnIndexRoute
+  '/_authenticated/coach/$threadId': typeof AuthenticatedCoachThreadIdRoute
+  '/_authenticated/pattern/$id': typeof AuthenticatedPatternIdRoute
+  '/_authenticated/coach/': typeof AuthenticatedCoachIndexRoute
+  '/_authenticated/pattern/': typeof AuthenticatedPatternIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/auth' | '/upcycle' | '/api/chat' | '/learn/$slug' | '/learn/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/upcycle' | '/api/chat' | '/learn/$slug' | '/learn'
-  id:
-    | '__root__'
     | '/'
     | '/auth'
     | '/upcycle'
     | '/api/chat'
     | '/learn/$slug'
     | '/learn/'
+    | '/coach/$threadId'
+    | '/pattern/$id'
+    | '/coach/'
+    | '/pattern/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/auth'
+    | '/upcycle'
+    | '/api/chat'
+    | '/learn/$slug'
+    | '/learn'
+    | '/coach/$threadId'
+    | '/pattern/$id'
+    | '/coach'
+    | '/pattern'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/upcycle'
+    | '/api/chat'
+    | '/learn/$slug'
+    | '/learn/'
+    | '/_authenticated/coach/$threadId'
+    | '/_authenticated/pattern/$id'
+    | '/_authenticated/coach/'
+    | '/_authenticated/pattern/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   UpcycleRoute: typeof UpcycleRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -104,6 +173,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -141,11 +217,57 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearnSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/coach/': {
+      id: '/_authenticated/coach/'
+      path: '/coach'
+      fullPath: '/coach/'
+      preLoaderRoute: typeof AuthenticatedCoachIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/coach/$threadId': {
+      id: '/_authenticated/coach/$threadId'
+      path: '/coach/$threadId'
+      fullPath: '/coach/$threadId'
+      preLoaderRoute: typeof AuthenticatedCoachThreadIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pattern/': {
+      id: '/_authenticated/pattern/'
+      path: '/pattern'
+      fullPath: '/pattern/'
+      preLoaderRoute: typeof AuthenticatedPatternIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/pattern/$id': {
+      id: '/_authenticated/pattern/$id'
+      path: '/pattern/$id'
+      fullPath: '/pattern/$id'
+      preLoaderRoute: typeof AuthenticatedPatternIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCoachThreadIdRoute: typeof AuthenticatedCoachThreadIdRoute
+  AuthenticatedPatternIdRoute: typeof AuthenticatedPatternIdRoute
+  AuthenticatedCoachIndexRoute: typeof AuthenticatedCoachIndexRoute
+  AuthenticatedPatternIndexRoute: typeof AuthenticatedPatternIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCoachThreadIdRoute: AuthenticatedCoachThreadIdRoute,
+  AuthenticatedPatternIdRoute: AuthenticatedPatternIdRoute,
+  AuthenticatedCoachIndexRoute: AuthenticatedCoachIndexRoute,
+  AuthenticatedPatternIndexRoute: AuthenticatedPatternIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   UpcycleRoute: UpcycleRoute,
   ApiChatRoute: ApiChatRoute,
