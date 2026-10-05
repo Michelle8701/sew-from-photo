@@ -1,15 +1,16 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { BookOpen, Camera, Home, MessageCircle, Recycle, LogOut } from "lucide-react";
+import { BookOpen, Calculator, Camera, FolderKanban, MessageCircle, Recycle, LogOut } from "lucide-react";
 import type { ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/hooks/use-session";
 
 const nav = [
-  { to: "/", label: "Home", icon: Home },
   { to: "/learn", label: "Learn", icon: BookOpen },
   { to: "/upcycle", label: "Upcycle", icon: Recycle },
   { to: "/pattern", label: "Pattern", icon: Camera },
+  { to: "/workroom", label: "Workroom", icon: FolderKanban },
+  { to: "/tools", label: "Tools", icon: Calculator },
   { to: "/coach", label: "Coach", icon: MessageCircle },
 ] as const;
 
@@ -75,7 +76,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Link
               key={n.to}
               to={n.to}
-              activeOptions={{ exact: n.to === "/" }}
+              
               className="flex flex-col items-center gap-1 py-2.5 text-[11px] font-medium text-muted-foreground"
               activeProps={{ className: "text-primary" }}
             >

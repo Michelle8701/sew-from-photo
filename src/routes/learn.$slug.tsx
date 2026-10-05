@@ -1,6 +1,9 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ChevronLeft, ChevronRight, Lightbulb, MessageCircle, PartyPopper } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, FolderPlus, Lightbulb, MessageCircle, PartyPopper } from "lucide-react";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { createProject } from "@/lib/projects";
 import { AppShell } from "@/components/AppShell";
 import { getGuide } from "@/lib/content";
 import { Button } from "@/components/ui/button";
@@ -35,6 +38,18 @@ function GuidePage() {
   const [step, setStep] = useState(-1); // -1 = overview
   const total = guide.steps.length;
   const back = guide.kind === "upcycle" ? "/upcycle" : "/learn";
+  const navigate = useNavigate();
+
+  async function saveToWorkroom() {
+    const { data } = await supabase.auth.getSession();
+    if (!data.session) { navigate({ to: "/auth" }); return; }
+    try {
+      const id = await createProject({ title: guide.title, source_type: "guide", source_ref: guide.slug, steps: guide.steps.map((s) => s.title) });
+      navigate({ to: "/workroom/$id", params: { id } });
+    } catch {
+      toast.error("Couldn't save to Workroom");
+    }
+  }
 
   if (step === -1) {
     return (
@@ -64,6 +79,7 @@ function GuidePage() {
             ))}
           </ol>
           <Button onClick={() => setStep(0)} size="lg" className="mt-6 h-14 w-full rounded-full text-base">Start step 1</Button>
+          <Button onClick={saveToWorkroom} size="lg" variant="outline" className="mt-3 h-12 w-full rounded-full"><FolderPlus className="size-4" /> Save to Workroom</Button>
         </div>
       </AppShell>
     );
