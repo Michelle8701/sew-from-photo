@@ -20,6 +20,7 @@ export const Route = createFileRoute("/")({
 
 const features = [
   { to: "/learn", icon: BookOpen, title: "Step-by-step tutorials", body: "Seams, hems, zippers, bags, garments, home decor and repairs — one clear step at a time." },
+  { to: "/tools", icon: Camera, title: "Yardage & machine settings", body: "Estimate fabric by project and width, and look up needle, thread, stitch and tension." },
   { to: "/pattern", icon: Camera, title: "Pattern draft from a photo", body: "Snap a garment or bag you love and get a starter pattern draft and project guide." },
   { to: "/upcycle", icon: Recycle, title: "Upcycling ideas", body: "Jeans into skirts, shirts into bags, scraps into accessories. Give old fabric a second life." },
   { to: "/coach", icon: MessageCircle, title: "AI Sewing Coach", body: "Skipped stitches? Stuck zipper? Ask anytime and get a calm, clear answer." },

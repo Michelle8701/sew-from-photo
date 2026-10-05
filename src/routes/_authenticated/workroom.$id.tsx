@@ -66,7 +66,7 @@ function ProjectPage() {
     if (!missing.length) return;
     supabase.storage.from("project-photos").createSignedUrls(missing, 3600).then(({ data }) => {
       if (!data) return;
-      setUrls((u) => ({ ...u, ...Object.fromEntries(data.filter((d) => d.signedUrl).map((d) => [d.path!, d.signedUrl])) }));
+      setUrls((u) => ({ ...u, ...Object.fromEntries(data.filter((d) => d.signedUrl).map((d) => [d.path!, d.signedUrl as string])) }));
     });
   }, [photos, urls]);
 

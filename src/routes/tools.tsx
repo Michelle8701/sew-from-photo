@@ -24,7 +24,7 @@ function Tools() {
   const [width, setWidth] = useState<45 | 60>(45);
   const [size, setSize] = useState("M");
   const [dir, setDir] = useState(false);
-  const [fabric, setFabric] = useState(fabricSettings[0].fabric);
+  const [fabric, setFabric] = useState(fabricSettings[0]!.fabric);
   const est = estimateYardage(type, width, size, dir);
   const fs = fabricSettings.find((f) => f.fabric === fabric)!;
 

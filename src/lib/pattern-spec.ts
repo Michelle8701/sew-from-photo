@@ -54,8 +54,8 @@ export function parsePieces(md: string): Piece[] {
     return {
       name: cells[0] ?? "Piece",
       qty: Number.isFinite(qty) && qty > 0 ? Math.min(qty, 8) : 1,
-      w: m ? parseFloat(m[1].replace(",", ".")) : null,
-      h: m ? parseFloat(m[2].replace(",", ".")) : null,
+      w: m ? parseFloat(m[1]!.replace(",", ".")) : null,
+      h: m ? parseFloat(m[2]!.replace(",", ".")) : null,
       notes: cells.slice(3).join(" "),
     };
   });
