@@ -54,6 +54,7 @@ export type Database = {
       }
       pattern_drafts: {
         Row: {
+          adjustments: Json
           content: string
           created_at: string
           id: string
@@ -62,6 +63,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          adjustments?: Json
           content: string
           created_at?: string
           id?: string
@@ -70,11 +72,63 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          adjustments?: Json
           content?: string
           created_at?: string
           id?: string
           notes?: string | null
           title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          fabric: string | null
+          id: string
+          measurements: Json
+          notes: string | null
+          photos: Json
+          source_ref: string | null
+          source_type: string
+          status: string
+          steps: Json
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          fabric?: string | null
+          id?: string
+          measurements?: Json
+          notes?: string | null
+          photos?: Json
+          source_ref?: string | null
+          source_type?: string
+          status?: string
+          steps?: Json
+          title: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          fabric?: string | null
+          id?: string
+          measurements?: Json
+          notes?: string | null
+          photos?: Json
+          source_ref?: string | null
+          source_type?: string
+          status?: string
+          steps?: Json
+          title?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
