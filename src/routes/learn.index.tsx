@@ -4,6 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { GuideList } from "@/components/GuideCard";
 import { guides } from "@/lib/content";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/learn/")({
   head: () => ({
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/learn/")({
       { name: "description", content: "Beginner-friendly, step-by-step sewing tutorials: seams, hems, zippers, bags, garments, home decor and repairs." },
       { property: "og:title", content: "Step-by-step sewing tutorials — Stitchology" },
       { property: "og:description", content: "Learn sewing with clear, visual instructions designed for beginners." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Learn,
@@ -30,16 +33,18 @@ function Learn() {
         <p className="mt-1 text-muted-foreground">Each project broken into manageable steps.</p>
         <div className="-mx-4 mt-5 flex gap-2 overflow-x-auto px-4 pb-1">
           {cats.map((c) => (
-            <button
+            <Button
               key={c}
+              type="button"
+              variant="outline"
               onClick={() => setCat(c)}
               className={cn(
-                "shrink-0 rounded-full border px-4 py-2 text-sm font-medium",
-                c === cat ? "border-secondary bg-secondary text-secondary-foreground" : "bg-card",
+                "h-10 shrink-0 rounded-full px-4 text-sm",
+                c === cat && "border-secondary bg-secondary text-secondary-foreground hover:bg-secondary/90 hover:text-secondary-foreground",
               )}
             >
               {c}
-            </button>
+            </Button>
           ))}
         </div>
         <div className="mt-5">

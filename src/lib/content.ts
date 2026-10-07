@@ -1,10 +1,14 @@
-export type Level = "Beginner" | "Easy" | "Intermediate";
+export type Level = "Beginner" | "Easy" | "Intermediate" | "Expert";
 export type Kind = "tutorial" | "upcycle";
+export type StepVisual = "auto" | "machine" | "thread" | "hem" | "zipper" | "pattern" | "piping" | "mending";
 
 export interface Step {
   title: string;
   body: string;
   tip?: string;
+  visual?: StepVisual;
+  video?: string;
+  mediaLabel?: string;
 }
 
 export interface Guide {
@@ -61,7 +65,7 @@ export const guides: Guide[] = [
     title: "Add a zipper: easy zip pouch",
     summary: "Learn zippers the friendly way with a lined pouch you'll actually use.",
     category: "Bags & accessories",
-    level: "Easy",
+    level: "Intermediate",
     time: "1 hr",
     supplies: ["2 outer + 2 lining rectangles, 20×15 cm", "20 cm zipper", "Zipper foot", "Thread"],
     steps: [
@@ -138,6 +142,125 @@ export const guides: Guide[] = [
       { title: "Secure the end", body: "Continue 2 cm past the split into the good stitches and knot or backstitch." },
       { title: "Sew a button: position", body: "Mark the button spot. Bring a doubled, knotted thread up from the back." },
       { title: "Make a shank", body: "Place a pin across the button and sew over it 6–8 times. Remove the pin, wrap thread around the stitches under the button 3 times, knot at the back.", tip: "The little shank gives room for the buttonhole fabric." },
+    ],
+  },
+  {
+    slug: "thread-machine",
+    kind: "tutorial",
+    title: "Thread your machine correctly",
+    summary: "Follow the thread path, seat the tension discs and bring up the bobbin thread without guesswork.",
+    category: "Basics",
+    level: "Beginner",
+    time: "15 min",
+    supplies: ["Sewing machine manual", "All-purpose thread", "Wound bobbin", "Light cotton scrap"],
+    steps: [
+      { title: "Raise the presser foot", body: "Switch the machine off, raise the needle to its highest point and lift the presser foot. This opens the tension discs so the upper thread can sit between them.", visual: "machine", mediaLabel: "The presser foot lifts while the needle moves to its highest point." },
+      { title: "Follow the upper thread path", body: "Place the spool on its pin, add the correct spool cap, then follow the numbered guides down, up through the take-up lever, and back toward the needle.", visual: "thread", mediaLabel: "The thread travels through each numbered guide and the take-up lever." },
+      { title: "Thread the needle", body: "Lower the presser foot only after the thread is seated. Pass the thread through the final needle-bar guide and thread the needle in the direction shown in your manual.", visual: "thread" },
+      { title: "Insert the bobbin", body: "Place the bobbin so it unwinds in the direction marked on the bobbin case. Draw the thread firmly into its slot and under the tension spring.", visual: "machine" },
+      { title: "Bring up the bobbin thread", body: "Hold the upper thread tail, turn the handwheel toward you for one full stitch, then pull the upper thread to lift the bobbin loop. Sweep both tails under the foot and toward the back.", tip: "Always turn the handwheel toward you; reversing it can tangle the hook area.", visual: "thread" },
+    ],
+  },
+  {
+    slug: "machine-tension",
+    kind: "tutorial",
+    title: "Master tension settings",
+    summary: "Read the stitch formation and balance upper tension for smooth, even seams.",
+    category: "Basics",
+    level: "Intermediate",
+    time: "20 min",
+    supplies: ["Two layers of project fabric", "Contrasting upper and bobbin thread", "Sewing machine", "Notebook"],
+    steps: [
+      { title: "Start at the normal setting", body: "Thread with the presser foot raised and set upper tension to the machine's normal middle range, commonly 4. Sew a test line on two fabric layers.", visual: "machine" },
+      { title: "Read both sides", body: "Inspect the seam. A balanced stitch locks between the layers. Loops underneath point to loose or incorrectly threaded upper thread; bobbin thread showing on top points to high upper tension.", visual: "thread", mediaLabel: "Balanced stitches lock inside the fabric; loops reveal which side needs attention." },
+      { title: "Rethread before adjusting", body: "If loops are dramatic, rethread the top and bobbin completely. Confirm the presser foot was raised while threading and the bobbin is inserted correctly.", tip: "Most sudden tension problems are threading problems, not a faulty tension dial.", visual: "thread" },
+      { title: "Adjust one number at a time", body: "For loops underneath, increase upper tension one number. For bobbin thread pulled to the top, decrease it one number. Sew and label a fresh test after every change.", visual: "machine" },
+      { title: "Record the result", body: "Choose the setting with balanced stitches and no puckering. Record the fabric, needle, thread and tension so you have a reliable starting point next time.", visual: "pattern" },
+    ],
+  },
+  {
+    slug: "blind-hem",
+    kind: "tutorial",
+    title: "Sew a blind hem",
+    summary: "Create a nearly invisible machine-sewn hem for trousers, skirts and dresses.",
+    category: "Basics",
+    level: "Expert",
+    time: "30 min",
+    supplies: ["Garment", "Matching thread", "Blind-hem foot", "Iron", "Pins"],
+    steps: [
+      { title: "Prepare the hem allowance", body: "Finish the raw edge, press the hem to its final depth, and mark the finished fold consistently around the garment.", visual: "hem" },
+      { title: "Fold back the garment", body: "With the wrong side facing up, fold the garment body back so only 3–6 mm of the finished hem edge extends beyond the fold.", visual: "hem", mediaLabel: "The garment folds back to expose a narrow finished hem edge." },
+      { title: "Align the guide", body: "Select the blind-hem stitch and fit the blind-hem foot. Place the folded edge against the foot's guide so straight stitches land on the hem allowance.", visual: "machine" },
+      { title: "Catch a tiny bite", body: "Adjust stitch width so each zigzag swing catches only one or two threads of the garment fold. Test before sewing the full hem.", tip: "A smaller bite is less visible; a bite that is too small may not hold securely.", visual: "hem" },
+      { title: "Sew and press", body: "Guide the fold steadily against the foot, then unfold the hem and press from the wrong side. Only tiny, widely spaced picks should show outside.", visual: "hem" },
+    ],
+  },
+  {
+    slug: "full-bust-adjustment",
+    kind: "tutorial",
+    title: "The Full Bust Adjustment (FBA)",
+    summary: "Add bust room to a bodice without enlarging the shoulders, neckline or back.",
+    category: "Clothing",
+    level: "Expert",
+    time: "45 min",
+    supplies: ["Front bodice pattern", "Tracing paper", "Ruler", "Tape", "Pencil", "Paper scissors"],
+    steps: [
+      { title: "Calculate the adjustment", body: "Compare your high bust to the pattern's high-bust basis, then compare your full bust. Divide the extra room needed by two because the front pattern represents half the body.", visual: "pattern" },
+      { title: "Mark the pivot lines", body: "Mark the bust apex. Draw line 1 from the waist dart through the apex to the armhole, line 2 from the apex to the side seam, and line 3 from the apex to the centre of the waist dart.", visual: "pattern" },
+      { title: "Cut and hinge", body: "Cut line 1 from the waist to the armhole seam allowance, leaving a paper hinge. Cut line 2 from the side seam toward the apex, leaving another hinge.", visual: "pattern" },
+      { title: "Spread the pattern", body: "Anchor the centre-front section. Swing the side section until the gap at the bust line equals your half-body adjustment. Keep the pattern flat and tape paper beneath.", tip: "Make a muslin before cutting fashion fabric; bust apex position is as important as added width.", visual: "pattern" },
+      { title: "True the dart and hem", body: "The spread creates a larger waist dart and extra length. Redraw smooth dart legs, level the centre-front hem with a horizontal cut-and-spread, and true the side and waist seams.", visual: "pattern" },
+    ],
+  },
+  {
+    slug: "zippered-pencil-pouch",
+    kind: "tutorial",
+    title: "Zippered pencil pouch",
+    summary: "Practice a centered zipper and tidy boxed ends in a useful beginner project.",
+    category: "Bags & accessories",
+    level: "Beginner",
+    time: "30 min",
+    supplies: ["2 outer rectangles, 25×12 cm", "2 lining rectangles, 25×12 cm", "23 cm zipper", "Zipper foot", "Thread"],
+    steps: [
+      { title: "Build the first zipper sandwich", body: "Place one outer piece right side up, center the zipper face down on its top edge, then place one lining piece face down. Clip the three layers together.", visual: "zipper" },
+      { title: "Stitch beside the teeth", body: "Fit the zipper foot and sew through all layers. Stop with the needle down to move the zipper pull behind the foot, then finish the seam.", visual: "zipper" },
+      { title: "Attach the second side", body: "Repeat with the remaining outer and lining pieces on the free zipper tape. Press fabric away from the teeth and topstitch both sides.", visual: "zipper" },
+      { title: "Sew the pouch", body: "Open the zipper halfway. Match outer pieces and lining pieces right sides together. Sew around, leaving a turning gap in the lining.", tip: "An open zipper is your escape route when the pouch is turned.", visual: "pattern" },
+      { title: "Turn and finish", body: "Trim bulky corners, turn through the lining gap and gently shape the corners. Close the gap with an edge stitch and tuck the lining inside.", visual: "zipper" },
+    ],
+  },
+  {
+    slug: "box-cushion-piping",
+    kind: "tutorial",
+    title: "Box cushion with custom piping",
+    summary: "Make a tailored cushion cover with a boxed side panel and crisp covered cord.",
+    category: "Home decor",
+    level: "Intermediate",
+    time: "1 hr",
+    supplies: ["Cushion foam", "Decorator fabric", "Piping cord", "Bias strips", "Zipper", "Zipper or piping foot"],
+    steps: [
+      { title: "Measure and cut", body: "Measure the foam's length, width and depth. Add seam allowance to two face panels and to the long boxing strip that wraps around the edge.", visual: "pattern" },
+      { title: "Cover the piping cord", body: "Join bias strips diagonally, wrap them around piping cord and stitch close to the cord with a piping or zipper foot.", visual: "piping" },
+      { title: "Baste piping to the faces", body: "Clip piping around each face panel with raw edges aligned. Ease around corners, clip the piping seam allowance, and overlap the cord ends neatly.", visual: "piping" },
+      { title: "Prepare the boxing strip", body: "Join the boxing strip into a loop and insert a zipper along the back section. Mark quarter points on the loop and both face panels.", visual: "zipper" },
+      { title: "Assemble the cushion", body: "Match quarter marks and sew the boxing strip to each face, stitching just inside the piping basting line. Open the zipper, turn, press and insert the foam.", tip: "Compress foam inside a thin plastic bag with a vacuum for easier insertion, then remove the bag.", visual: "piping" },
+    ],
+  },
+  {
+    slug: "visible-denim-darning",
+    kind: "tutorial",
+    title: "Darning denim with visible mending",
+    summary: "Stabilize worn denim and turn dense repair stitches into a deliberate design detail.",
+    category: "Repair",
+    level: "Intermediate",
+    time: "40 min",
+    supplies: ["Damaged denim", "Denim patch", "Denim needle 90/14 or 100/16", "Contrasting thread", "Pins or washable glue"],
+    steps: [
+      { title: "Trim and stabilize", body: "Trim only loose threads. Cut a rounded patch at least 2.5 cm larger than the weak area and place it behind the damage with its grain aligned.", visual: "mending" },
+      { title: "Secure the patch", body: "Pin or lightly glue the patch from the wrong side. Baste around its edge so nothing shifts during dense stitching.", visual: "mending" },
+      { title: "Set up for denim", body: "Install a denim needle, lengthen the straight stitch to about 2.5–3 mm and test tension on a matching layered scrap.", visual: "machine" },
+      { title: "Darn with parallel rows", body: "Sew rows beyond the damaged area in the direction of the denim twill. Pivot or reverse at varied points so a hard ridge does not form.", tip: "Support the fabric's weight so it cannot pull the needle sideways.", visual: "mending" },
+      { title: "Cross and finish", body: "Add a lighter second set of rows across the first for strength and visible texture. Trim the patch close to the stitching on the wrong side and press.", visual: "mending" },
     ],
   },
   {

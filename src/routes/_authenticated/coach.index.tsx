@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
+import { createCoachThread } from "@/lib/coach";
 
 export const Route = createFileRoute("/_authenticated/coach/")({
   head: () => ({
@@ -25,12 +26,6 @@ const starters = [
   "What does 'right sides together' mean?",
 ];
 
-export async function createThread() {
-  const { data, error } = await supabase.from("threads").insert({}).select("id").single();
-  if (error) throw error;
-  return data.id;
-}
-
 function CoachList() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -45,7 +40,7 @@ function CoachList() {
 
   async function start(q?: string) {
     try {
-      const id = await createThread();
+      const id = await createCoachThread();
       navigate({ to: "/coach/$threadId", params: { threadId: id }, search: q ? { q } : {} });
     } catch {
       toast.error("Couldn't start a chat");
