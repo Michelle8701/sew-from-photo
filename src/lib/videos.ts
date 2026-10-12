@@ -7,7 +7,7 @@ export interface TutorialVideo {
 // Curated YouTube tutorials, one per guide (verified embeddable).
 export const tutorialVideos: Record<string, TutorialVideo> = {
   "straight-seams": { id: "meVu_3Iv-3U", title: "How to sew in a straight line", channel: "Made to Sew" },
-  "hem-trousers": { id: "CNopeB23mek", title: "How to hem pants using a blind hem stitch", channel: "Cutesy Crafts" },
+  "hem-trousers": { id: "yYGsRfqVpe4", title: "How to hem pants at home (double-fold hem)", channel: "DIY Fashion Rebel" },
   "zipper-pouch": { id: "wc5g641ZH0A", title: "How to make a simple zipper pouch", channel: "Jan Howell" },
   "tote-bag": { id: "BOah0f5p9gM", title: "Fully lined tote bag with boxed corners", channel: "Christine's Home Affairs" },
   "elastic-skirt": { id: "jMgiosQXspo", title: "Easy elastic waist skirt for beginners", channel: "Sew Anastasia" },
