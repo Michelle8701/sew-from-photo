@@ -111,7 +111,7 @@ function GuidePage() {
           ))}
         </div>
         <header className="py-5">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary">{guide.category} · {guide.level} · {guide.time}</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary">{guide.category} · {guide.level} · Sew time: {guide.time}</p>
           <h1 className="mt-1 text-3xl font-semibold leading-tight md:text-4xl">{guide.title}</h1>
           <p className="mt-1 max-w-2xl text-muted-foreground">{guide.summary}</p>
         </header>

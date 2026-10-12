@@ -22,7 +22,7 @@ export function GuideCard({ g }: { g: Guide }) {
         <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{g.summary}</p>
         <div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
           <span className="rounded-full bg-accent px-2 py-0.5 font-medium text-accent-foreground">{g.level}</span>
-          <span className="flex items-center gap-1"><Clock className="size-3.5" /> {g.time}</span>
+          <span className="flex items-center gap-1"><Clock className="size-3.5" /> Sew time: {g.time}</span>
           <span>{g.steps.length} steps</span>
         </div>
       </div>
