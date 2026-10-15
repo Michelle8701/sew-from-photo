@@ -9,6 +9,7 @@ import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { Measurement, ProjectStep } from "@/lib/projects";
+import { PHOTO_ERROR, resizeToBlob } from "@/lib/image";
 
 export const Route = createFileRoute("/_authenticated/workroom/$id")({
   head: () => ({ meta: [{ title: "Project — My Workroom — Stitchology" }, { name: "description", content: "Track steps, measurements, fabric and photos for this project." }] }),
@@ -17,15 +18,6 @@ export const Route = createFileRoute("/_authenticated/workroom/$id")({
 
 const input = "h-11 w-full rounded-xl border bg-card px-3 text-base";
 
-async function resize(file: File): Promise<Blob> {
-  const img = await createImageBitmap(file);
-  const scale = Math.min(1, 1600 / Math.max(img.width, img.height));
-  const c = document.createElement("canvas");
-  c.width = Math.round(img.width * scale);
-  c.height = Math.round(img.height * scale);
-  c.getContext("2d")!.drawImage(img, 0, 0, c.width, c.height);
-  return new Promise((r, j) => c.toBlob((b) => (b ? r(b) : j(new Error("resize"))), "image/jpeg", 0.85));
-}
 
 function ProjectPage() {
   const { id } = Route.useParams();
@@ -72,16 +64,19 @@ function ProjectPage() {
 
   async function save(patch: Record<string, unknown>, quiet = true) {
     const { error } = await supabase.from("projects").update(patch as never).eq("id", id);
-    if (error) toast.error("Couldn't save");
-    else {
-      if (!quiet) toast.success("Saved");
-      qc.invalidateQueries({ queryKey: ["projects"] });
+    if (error) {
+      toast.error("Couldn't save — check your connection and try again.");
+      return false;
     }
+    if (!quiet) toast.success("Saved");
+    qc.invalidateQueries({ queryKey: ["projects"] });
+    return true;
   }
 
-  function updateSteps(next: ProjectStep[]) {
+  async function updateSteps(next: ProjectStep[]) {
+    const prev = steps;
     setSteps(next);
-    save({ steps: next as unknown as Json });
+    if (!(await save({ steps: next as unknown as Json }))) setSteps(prev);
   }
 
   async function addPhoto(f?: File) {
@@ -89,24 +84,32 @@ function ProjectPage() {
     setUploading(true);
     try {
       const { data: u } = await supabase.auth.getUser();
-      const path = `${u.user!.id}/${id}/${Date.now()}.jpg`;
-      const { error } = await supabase.storage.from("project-photos").upload(path, await resize(f), { contentType: "image/jpeg" });
+      if (!u.user) throw new Error("auth");
+      let blob: Blob;
+      try {
+        blob = await resizeToBlob(f, 1600);
+      } catch {
+        toast.error(PHOTO_ERROR);
+        return;
+      }
+      const path = `${u.user.id}/${id}/${Date.now()}.jpg`;
+      const { error } = await supabase.storage.from("project-photos").upload(path, blob, { contentType: "image/jpeg" });
       if (error) throw error;
       const next = [...photos, path];
-      setPhotos(next);
-      await save({ photos: next });
+      if (await save({ photos: next })) setPhotos(next);
+      else await supabase.storage.from("project-photos").remove([path]);
     } catch {
-      toast.error("Couldn't upload photo");
+      toast.error("Couldn't upload photo. Please try again.");
     } finally {
       setUploading(false);
     }
   }
 
   async function removePhoto(path: string) {
-    await supabase.storage.from("project-photos").remove([path]);
     const next = photos.filter((x) => x !== path);
+    if (!(await save({ photos: next }))) return;
     setPhotos(next);
-    save({ photos: next });
+    await supabase.storage.from("project-photos").remove([path]);
   }
 
   async function toggleComplete() {
@@ -117,8 +120,12 @@ function ProjectPage() {
 
   async function remove() {
     if (!confirm("Delete this project?")) return;
+    const { error } = await supabase.from("projects").delete().eq("id", id);
+    if (error) {
+      toast.error("Couldn't delete this project. Please try again.");
+      return;
+    }
     if (photos.length) await supabase.storage.from("project-photos").remove(photos);
-    await supabase.from("projects").delete().eq("id", id);
     qc.invalidateQueries({ queryKey: ["projects"] });
     navigate({ to: "/workroom" });
   }
@@ -177,17 +184,19 @@ function ProjectPage() {
         <input value={fabric} onChange={(e) => setFabric(e.target.value)} onBlur={() => save({ fabric: fabric || null })} placeholder="e.g. 2 m mustard linen, 150 cm wide" className={`${input} mt-2`} />
 
         <h2 className="mt-7 text-lg font-semibold">Progress photos</h2>
-        <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => { addPhoto(e.target.files?.[0]); e.target.value = ""; }} />
         <div className="mt-2 grid grid-cols-3 gap-2">
           {photos.map((ph) => (
             <div key={ph} className="relative aspect-square overflow-hidden rounded-xl bg-muted">
               {urls[ph] && <img src={urls[ph]} alt="Progress" className="size-full object-cover" />}
-              <button onClick={() => removePhoto(ph)} aria-label="Remove photo" className="absolute right-1 top-1 rounded-full bg-background/80 p-1"><X className="size-3.5" /></button>
+              <button onClick={() => removePhoto(ph)} aria-label="Remove photo" className="absolute right-1 top-1 z-10 rounded-full bg-background/80 p-1"><X className="size-3.5" /></button>
             </div>
           ))}
-          <button onClick={() => fileRef.current?.click()} disabled={uploading} className="stitch grid aspect-square place-items-center rounded-xl text-sm text-muted-foreground">
+          <div className="stitch relative grid aspect-square place-items-center rounded-xl text-sm text-muted-foreground">
             <span className="flex flex-col items-center gap-1"><Camera className="size-6" />{uploading ? "Uploading…" : "Add photo"}</span>
-          </button>
+            {!uploading && (
+              <input type="file" accept="image/*" aria-label="Add photo" className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0" onChange={(e) => { addPhoto(e.target.files?.[0]); e.target.value = ""; }} />
+            )}
+          </div>
         </div>
 
         <h2 className="mt-7 text-lg font-semibold">Notes</h2>
