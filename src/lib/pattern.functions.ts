@@ -46,7 +46,8 @@ export const generatePatternDraft = createServerFn({ method: "POST" })
       content = await result.text;
     } catch (e) {
       console.error("pattern generation failed", e);
-      throw new Error("We couldn't create a draft right now. Please try again shortly.");
+      const { aiErrorMessage } = await import("@/lib/ai/errors.server");
+      throw new Error(aiErrorMessage(e, "We couldn't create a draft right now. Please try again shortly."));
     }
     if (!content.trim()) throw new Error("No draft was returned. Try a clearer photo.");
     const title = (content.match(/^#\s+(.+)$/m)?.[1] ?? "Pattern draft").slice(0, 80);
@@ -55,6 +56,9 @@ export const generatePatternDraft = createServerFn({ method: "POST" })
       .insert({ title, notes: data.notes ?? null, content, user_id: context.userId })
       .select("id")
       .single();
-    if (error) throw new Error("Draft created but couldn't be saved.");
+    if (error) {
+      console.error("save draft failed", error);
+      throw new Error("Draft created but couldn't be saved. Please try again.");
+    }
     return { id: row.id };
   });

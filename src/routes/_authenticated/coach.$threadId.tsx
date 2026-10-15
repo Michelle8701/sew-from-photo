@@ -64,15 +64,21 @@ function ChatWindow({ threadId, initial }: { threadId: string; initial: UIMessag
     [threadId],
   );
 
-  const { messages, sendMessage, status, stop } = useChat({
+  const { messages, sendMessage, status, stop, error, regenerate, clearError } = useChat({
     id: threadId,
     messages: initial,
     transport,
     onError: (e) => {
-      const m = e.message || "";
-      if (m.includes("402")) toast.error("AI credits have run out.");
-      else if (m.includes("429")) toast.error("Too many requests — please wait a moment.");
-      else toast.error("The coach couldn't answer. Please try again.");
+      let m = e.message || "";
+      try {
+        const parsed = JSON.parse(m) as { error?: string };
+        if (parsed.error) m = parsed.error;
+      } catch {
+        /* plain text */
+      }
+      if (/402/.test(m)) m = "AI credits have run out.";
+      else if (/429/.test(m)) m = "Too many requests — please wait a moment.";
+      toast.error(m && m.length < 200 ? m : "The coach couldn't answer. Please try again.");
     },
   });
 
@@ -83,6 +89,11 @@ function ChatWindow({ threadId, initial }: { threadId: string; initial: UIMessag
       navigate({ search: {}, replace: true });
     }
   }, [q, initial.length, sendMessage, navigate]);
+
+  const retry = () => {
+    clearError();
+    regenerate();
+  };
 
   useEffect(() => {
     if (status === "ready") textareaRef.current?.focus();
@@ -118,6 +129,12 @@ function ChatWindow({ threadId, initial }: { threadId: string; initial: UIMessag
               </Message>
             ))}
             {status === "submitted" && <Shimmer className="text-sm">Coach is thinking…</Shimmer>}
+            {error && status !== "submitted" && status !== "streaming" && (
+              <div className="rounded-xl border bg-card p-3 text-sm">
+                The coach couldn't finish that answer.{" "}
+                <button onClick={retry} className="font-semibold text-primary underline">Try again</button>
+              </div>
+            )}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
