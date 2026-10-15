@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, type UIMessage } from "ai";
 import { COACH_SYSTEM, streamCoach } from "@/lib/ai/gateway.server";
 import { getUserClient } from "@/lib/ai/supabase-user.server";
+import { aiErrorMessage } from "@/lib/ai/errors.server";
 import {
   getLovableAiGatewayRunId,
   withLovableAiGatewayRunIdHeader,
@@ -19,21 +20,34 @@ export const Route = createFileRoute("/api/chat")({
       POST: async ({ request }) => {
         const user = await getUserClient(request);
         if (!user) return json(401, "Please sign in again.");
-        const body = (await request.json()) as { messages?: UIMessage[]; threadId?: string };
+        let body: { messages?: UIMessage[]; threadId?: string };
+        try {
+          body = (await request.json()) as typeof body;
+        } catch {
+          return json(400, "Invalid request");
+        }
         const messages = body.messages;
-        if (!Array.isArray(messages) || !body.threadId) return json(400, "Invalid request");
+        if (!Array.isArray(messages) || messages.length === 0 || !body.threadId) return json(400, "Invalid request");
         const threadId = body.threadId;
 
-        const { data: thread } = await user.supabase
+        const { data: thread, error: threadErr } = await user.supabase
           .from("threads")
           .select("id,title")
           .eq("id", threadId)
           .maybeSingle();
+        if (threadErr) return json(500, "Couldn't open this chat. Please try again.");
         if (!thread) return json(404, "Chat not found");
+
+        let modelMessages;
+        try {
+          modelMessages = await convertToModelMessages(messages);
+        } catch {
+          return json(400, "This chat couldn't be read. Start a new chat.");
+        }
 
         const { result, runIdFetch } = streamCoach({
           system: COACH_SYSTEM,
-          messages: await convertToModelMessages(messages),
+          messages: modelMessages,
           signal: request.signal,
           runId: getLovableAiGatewayRunId(request),
         });
@@ -43,7 +57,7 @@ export const Route = createFileRoute("/api/chat")({
           sendReasoning: true,
           onError: (e) => {
             console.error("coach error", e);
-            return "The coach couldn't answer right now. Please try again in a moment.";
+            return aiErrorMessage(e, "The coach couldn't answer right now. Please try again in a moment.");
           },
           onFinish: async ({ messages: all }) => {
             const rows = all.map((m) => ({
